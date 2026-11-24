@@ -69,20 +69,31 @@ def get_rating():
             print(Fore.RED + "Rating out of range. Try again.\n")
         except ValueError:
             print(Fore.RED + "Invalid input. Try again.\n")
+    pass
 
 print(Fore.BLUE + "🎥 Welcome to your Personal Movie Recommendation Assistant! 🎥\n")
 name = input(Fore.YELLOW + "What's your name? ").strip()
-    pass
+print(f"\n{Fore.GREEN}Great to meet you, {name}!\n")
+print(Fore.BLUE + "\n🔍 Let's find the perfect movie for you!\n")
 
-# MAIN (students write)
-# 1) Print welcome + ask name + greet
-# 2) Print 🔍 line
-# 3) genre = get_genre(); mood input
-# 4) Print "Analyzing mood" + dots(); compute mood polarity + print mood line
-# 5) rating = get_rating()
-# 6) Print "Finding movies for {name}" + dots()
-# 7) recs = recommend(...); if str print red else show()
-# 8) Loop ask "Would you like more recommendations? (yes/no):"
-#    - no -> print enjoy line + break
-#    - yes -> recommend again + show
-#    - else -> invalid choice line
+genre = get_genre()
+mood = input(Fore.YELLOW + "How do you feel today? (Describe your mood): ").strip()
+print(Fore.BLUE + "\nAnalyzing mood", end="", flush=True); dots()
+mp = TextBlob(mood).sentiment.polarity
+md = "positive 😊" if mp > 0 else "negative 😞" if mp < 0 else "neutral 😐"
+print(f"\n{Fore.GREEN}Your mood is {md} (Polarity: {mp:.2f}).\n")
+
+rating = get_rating()
+print(f"{Fore.BLUE}\nFinding movies for {name}", end="", flush=True); dots()
+recs = recommend(genre=genre, mood=mood, rating=rating, n=5)
+print(Fore.RED + recs + "\n") if isinstance(recs, str) else show(recs, name)
+
+while True:
+    a = input(Fore.YELLOW + "\nWould you like more recommendations? (yes/no): ").strip().lower()
+    if a == "no":
+        print(Fore.GREEN + f"\nEnjoy your movie picks, {name}! 🎬🍿\n"); break
+    if a == "yes":
+        recs = recommend(genre=genre, mood=mood, rating=rating, n=5)
+        print(Fore.RED + recs + "\n") if isinstance(recs, str) else show(recs, name)
+    else:
+        print(Fore.RED + "Invalid choice. Try again,\n")
